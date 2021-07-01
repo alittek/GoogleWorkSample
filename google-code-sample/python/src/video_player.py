@@ -6,20 +6,17 @@ from .video_playlist import Playlist
 
 import random
 
-#curr_playing = ""
-#paused = False
-
 class VideoPlayer:
     """A class used to represent a Video Player."""
     playlists = []
-    curr_playing = ""
+    curr_video = ""
     paused = False
 
     def __init__(self):
         self._video_library = VideoLibrary()
 
-        VideoPlayer.curr_playing = ""
-        VideoPlayer.paused = False
+        self.curr_video = ""
+        self.paused = False
 
     def number_of_videos(self):
         num_videos = len(self._video_library.get_all_videos())
@@ -38,27 +35,25 @@ class VideoPlayer:
         Args:
             video_id: The video_id to be played.
         """
-        VideoPlayer.paused = False
+        self.paused = False
         video = self._video_library.get_video(video_id)
-        curr_video = self._video_library.get_video(VideoPlayer.curr_playing)
 
         if not video:
             print("Cannot play video: Video does not exist")
         else:
-            if curr_video:
-                print("Stopping video: " + curr_video.title)
-            VideoPlayer.curr_playing = video.video_id
+            if self.curr_video:
+                print("Stopping video: " + self.curr_video.title)
+            self.curr_video = video
             print("Playing video: " + video.title)
 
     def stop_video(self):
         """Stops the current video."""
-        video = self._video_library.get_video(VideoPlayer.curr_playing)
-        if not video:
+        if not self.curr_video:
             print("Cannot stop video: No video is currently playing")
         else:
-            print("Stopping video: " + video.title)
-            VideoPlayer.curr_playing = ""
-            VideoPlayer.paused = False  
+            print("Stopping video: " + self.curr_video.title)
+            self.curr_video = ""
+            self.paused = False  
 
     def play_random_video(self):
         """Plays a random video from the video library."""
@@ -69,40 +64,34 @@ class VideoPlayer:
 
     def pause_video(self):
         """Pauses the current video."""
-        video = self._video_library.get_video(VideoPlayer.curr_playing)
-        if VideoPlayer.paused == True:
-            print("Video already paused: " + video.title)
-        elif VideoPlayer.curr_playing != "":
-            print("Pausing video: " + video.title)
-            VideoPlayer.paused = True
+        if self.paused == True:
+            print("Video already paused: " + self.curr_video.title)
+        elif self.curr_video != "":
+            print("Pausing video: " + self.curr_video.title)
+            self.paused = True
         else:
             print("Cannot pause video: No video is currently playing")
 
     def continue_video(self):
         """Resumes playing the current video."""
-        video = self._video_library.get_video(VideoPlayer.curr_playing)
-        if VideoPlayer.paused == False and not video:
+        
+        if self.paused == False and not self.curr_video:
             print("Cannot continue video: No video is currently playing")
-        elif VideoPlayer.paused == False and video:
+        elif self.paused == False and self.curr_video:
             print("Cannot continue video: Video is not paused")
         else:
-            print("Continuing video: " + video.title)
-            VideoPlayer.paused = False
+            print("Continuing video: " + self.curr_video.title)
+            self.paused = False
 
     def show_playing(self):
         """Displays video currently playing."""
-        video = self._video_library.get_video(VideoPlayer.curr_playing)
-
-        video_list = self._video_library.get_all_videos()
-        video_title = VideoPlayer.curr_playing                
-
-        if not video:
+        if not self.curr_video:
             print("No video is currently playing")
         else:
-            if VideoPlayer.paused == False:
-                print("Currently playing: " + video.title + " (" + video.video_id + ") [" + ' '.join(map(str, video.tags)) + "]")
+            if self.paused == False:
+                print("Currently playing: " + self.curr_video.title + " (" + self.curr_video.video_id + ") [" + ' '.join(map(str, self.curr_video.tags)) + "]")
             else:
-                print("Currently playing: " + video.title + " (" + video.video_id + ") [" + ' '.join(map(str, video.tags)) + "]" + " - PAUSED")
+                print("Currently playing: " + self.curr_video.title + " (" + self.curr_video.video_id + ") [" + ' '.join(map(str, self.curr_video.tags)) + "]" + " - PAUSED")
 
     def create_playlist(self, playlist_name):
         """Creates a playlist with a given name.
